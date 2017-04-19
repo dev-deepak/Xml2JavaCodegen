@@ -1,0 +1,25 @@
+<xml>
+	<C name="abx" inherit="extends" parent="classname" scope="+">
+		<field name="age" type="int" scope="-" />
+		<method name="method1" type="void" scope="+">
+			<param name="param1" type="int" />
+			<param name="param2" type="int" />
+		</method>
+	</C>
+
+	<E name="abx" scope="+">
+		<field name="age" />
+		<method name="method1" type="void" scope="+">
+			<param name="param1" type="int" />
+			<param name="param2" type="int" />
+		</method>
+	</E>
+
+	<I name="abx" inherit="extends" parent="classname" scope="+">
+		<field name="age" type="int" scope="-" />
+		<method name="method1" type="void" scope="+">
+			<param name="param1" type="int" />
+			<param name="param2" type="int" />
+		</method>
+	</I>
+</xml>
