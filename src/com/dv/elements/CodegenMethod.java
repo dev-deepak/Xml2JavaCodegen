@@ -15,25 +15,17 @@ public class CodegenMethod {
 	@XmlElement
 	private ArrayList<Param> param;
 	
-	
-	
 	public String getName() {
 		return name;
 	}
-
-
-
+ 
 	public String getType() {
 		return type;
 	}
 
-
-
 	public String getScope() {
 		return scope;
 	}
-
-
 
 	public ArrayList<Param> getParam() {
 		return param;

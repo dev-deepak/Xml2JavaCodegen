@@ -38,8 +38,31 @@ public class CodegenClassField {
 			}
 		}
 		return append.toString();
-		
-		
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public String getInherit() {
+		return inherit;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public String getScope() {
+		return scope;
+	}
+
+	public ArrayList<CodegenField> getField() {
+		return field;
+	}
+
+	public ArrayList<CodegenMethod> getMethod() {
+		return method;
+	}
+
+	
 }

@@ -16,5 +16,12 @@ public class CodegenElements {
 	@XmlElement(name = "I")
 	private ArrayList<CodegenClassField> interfaces;
 	
+	@XmlElement(name = "E")
+	private ArrayList<CodegenClassField> enums;
+
+	public ArrayList<CodegenClassField> getClasses() {
+		return classes;
+	}
 	
+		
 }
