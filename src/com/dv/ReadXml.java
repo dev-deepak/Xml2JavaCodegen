@@ -33,50 +33,40 @@ public class ReadXml {
 		    ArrayList<CodegenClassField> classesToCreate = o.getClasses();
 		    if(classesToCreate != null && !classesToCreate.isEmpty()){
 		    	for(CodegenClassField classObjects: classesToCreate){
-		    		Class<? extends CodegenClassField> classObject = classObjects.getClass();
-					StringBuilder classBuilderFromCode = new StringBuilder();
+		    		StringBuilder classBuilderFromCode = new StringBuilder();
 					classBuilderFromCode.append("/**\n* Created by DV\n* Date: April 20, 2016\n* Copyright (c): All rights reserved by the author\n*/");
-					Field declaredNameField = classObject.getDeclaredField("name");
-					if(declaredNameField == null){
+					String declaredClassNameField = classObjects.getName();
+					if(declaredClassNameField == null || declaredClassNameField.isEmpty()){
 						throw new Exception("No name of class. Specify name");
 					}else{
-						declaredNameField.setAccessible(true);
-						Field declaredClassScope = classObject.getDeclaredField("scope");
-						declaredClassScope.setAccessible(true);
-						
-						classBuilderFromCode.append(ScopeEnum.fromSymbol(declaredClassScope == null ? "" : (String) declaredClassScope.get(classObjects))
-								.getValue()).append(" class ").append(declaredNameField.get(classObjects));
+						classBuilderFromCode.append(ScopeEnum.fromSymbol(classObjects.getScope()).getValue()).append(" class ").append(classObjects.getName());
 					}
 					
-					Field declaredInheritType = classObject.getDeclaredField("inherit");
-					
+					String declaredInheritType  = classObjects.getInherit();
 					if(declaredInheritType != null){
-						Field declaredParentField = classObject.getDeclaredField("parent");
-						if(declaredParentField == null){
+						String declaredParentField = classObjects.getParent();
+						if(declaredParentField == null || declaredParentField.isEmpty()){
 							throw new Exception("Parent superclass or interface expected");
 							
 						}else{
-							declaredInheritType.setAccessible(true);
-							declaredParentField.setAccessible(true);
-							classBuilderFromCode.append(space).append(declaredInheritType.get(classObjects)).append(space).append(declaredParentField.get(classObjects));
+							classBuilderFromCode.append(space).
+							append(declaredInheritType).append(space).append(classObjects.getParent());
 						}
 					}
 					classBuilderFromCode.append(space).append("{\n");
 					StringBuilder sb = new StringBuilder();
-					Field declaredFieldsInNewClass = classObject.getDeclaredField("field");
+					ArrayList<CodegenField> declaredFieldsInNewClass = classObjects.getField();
 					if(declaredFieldsInNewClass != null){
-						declaredFieldsInNewClass.setAccessible(true);
-						ArrayList<CodegenField> fieldsList = (ArrayList<CodegenField>) declaredFieldsInNewClass.get(classObjects);
-						for(CodegenField f : fieldsList){
+						for(CodegenField f : declaredFieldsInNewClass){
 							classBuilderFromCode.append(ScopeEnum.fromSymbol(f.getScope()).getValue()).
 							append(space).append(f.getType()).append(space).append(f.getName()).append(";\n");
 							System.out.println(f.toString());
 						}
 						if(true){
 							sb.append("\n@Override\npublic String toString(){\n");
-							sb.append("return \""+declaredNameField.get(classObjects)+" [");
+							sb.append("return \""+classObjects.getName()+" [");
 							int x = 0;
-							for(CodegenField f : fieldsList){
+							for(CodegenField f : declaredFieldsInNewClass){
 								if(x++ == 0)
 									sb.append(""+f.getName()+"=\"+ ").append(f.getName()).append("+");
 								else
@@ -87,22 +77,22 @@ public class ReadXml {
 						
 						if(true){
 							StringBuilder jsonSB= new StringBuilder();
-							jsonSB.append("{").append("\"").append(declaredNameField.get(classObjects)).append("\": {").append("\n");
-							for(CodegenField f : fieldsList){
+							jsonSB.append("\npublic Json toJSon(){\n");
+							jsonSB.append("return {").append("\"").append(classObjects.getName()).append("\": {").append("\n");
+							for(CodegenField f : declaredFieldsInNewClass){
 								
 								jsonSB.append(" \""+f.getName()+"\": ").append("\""+f.getName()).append("\"").append("\n");
 							}
-							jsonSB.append("}}");
+							jsonSB.append("}};\n}");
 							System.out.println(jsonSB.toString());
 						}
 						
 					}
 					
-					Field declaredMethodsInNewClass = classObject.getDeclaredField("method");
+					ArrayList<CodegenMethod> declaredMethodsInNewClass = classObjects.getMethod();
+					
 					if(declaredMethodsInNewClass != null){
-						declaredMethodsInNewClass.setAccessible(true);
-						ArrayList<CodegenMethod> fieldsList = (ArrayList<CodegenMethod>) declaredMethodsInNewClass.get(classObjects);
-						for(CodegenMethod f : fieldsList){
+						for(CodegenMethod f : declaredMethodsInNewClass){
 							classBuilderFromCode.append(ScopeEnum.fromSymbol(f.getScope()).getValue()).append(space).append(f.getType()).append(space).append(f.getName());
 							if(f.getParam() != null && !f.getParam().isEmpty()){
 								classBuilderFromCode.append("(");
@@ -113,7 +103,6 @@ public class ReadXml {
 								}
 								classBuilderFromCode.append("){\n\n}");
 							}else classBuilderFromCode.append("(){\n\n}");
-							System.out.println(f.toString());
 						}
 					}
 					
@@ -121,10 +110,9 @@ public class ReadXml {
 					File outputFile = new File("src\\com\\dv\\output.java");
 					outputFile.createNewFile();
 					BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(outputFile));
-					bufferedOutputStream.write(sb.toString().getBytes());
+					bufferedOutputStream.write(classBuilderFromCode.toString().getBytes());
 					bufferedOutputStream.close();
-					System.out.println(classBuilderFromCode.toString());
-					System.out.println(o);
+					 
 
 		    	}
 		    }
